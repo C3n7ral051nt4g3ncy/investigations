@@ -33,7 +33,7 @@ def extract_apk_config(data):
             local_hdr_offset = struct.unpack("<I4c2H4I4H6sI", data[pos:pos+46])
             internal_bm, external_bm = struct.unpack("<HI", hidden_data)
         except Exception as e:
-            print("[e] Error unpacking data from CDS: {}".format(e))
+            print(f"[e] Error unpacking data from CDS: {e}")
         else:
             #return None
             if (internal_bm & 0xfffa) > 0:
@@ -42,16 +42,15 @@ def extract_apk_config(data):
                     if hd.isprintable():
                         b64 += hd
                 except UnicodeDecodeError:
-                    print("Error with {}".format(hidden_data))
+                    print(f"Error with {hidden_data}")
 
     if b64 == '':
         return None
-    else:
-        try:
-            return base64.b64decode(b64)
-        except Exception:
-            print("Impossible to decode the Base 64 data")
-            return None
+    try:
+        return base64.b64decode(b64)
+    except Exception:
+        print("Impossible to decode the Base 64 data")
+        return None
 
 
 def extract_config(fpath):
@@ -95,7 +94,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     config = extract_config(args.FILE)
-    dpath = os.path.splitext(args.FILE)[0] + ".config"
+    dpath = f"{os.path.splitext(args.FILE)[0]}.config"
 
     if os.path.isfile(dpath):
         print("Target file already exist")
@@ -104,6 +103,6 @@ if __name__ == "__main__":
     if config:
         with open(dpath, 'wb+') as f:
             f.write(config)
-        print("Written in {}".format(dpath))
+        print(f"Written in {dpath}")
     else:
         print("config not found")

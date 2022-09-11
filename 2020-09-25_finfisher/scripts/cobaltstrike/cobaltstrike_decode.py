@@ -25,15 +25,15 @@ if __name__ == '__main__':
     ba = data.find(b"\xe8\xd4\xff\xff\xff")
     if ba == -1:
         ba = data.find(b"\xe8\xd0\xff\xff\xff")
-        if ba == -1:
-            print("Base Address not found")
-            sys.exit(1)
+    if ba == -1:
+        print("Base Address not found")
+        sys.exit(1)
     ba += 5
 
     key = data[ba:ba+4]
-    print("Key : {}".format(key))
+    print(f"Key : {key}")
     size = struct.unpack("I", xor(key, data[ba+4:ba+8]))[0]
-    print("Size : {}".format(size))
+    print(f"Size : {size}")
 
     res = bytearray()
     i = ba+8

@@ -9,11 +9,9 @@ def decode_array(encoded, index):
     if index % 2 == 0:
         mask = [48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102]
 
-    decoded = []
-    counter = 0
-    for e in encoded:
-        decoded.append(chr(e ^ mask[counter % len(mask)]))
-        counter += 1
+    decoded = [
+        chr(e ^ mask[counter % len(mask)]) for counter, e in enumerate(encoded)
+    ]
 
     return ''.join(decoded)
 

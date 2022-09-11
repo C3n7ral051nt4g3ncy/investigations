@@ -770,18 +770,21 @@ def decode(m):
         elif name in cfg and type(cfg[name]) != list:
             olv = cfg[name]
             cfg[name] = [olv, data]
-        elif name in cfg and type(cfg[name]) == list:
+        elif name in cfg:
             cfg[name].append(data)
         elif name == "TlvTypeInstalledModules":
             # Specific decoding for Android modules
-            olv = {"data": data}
-            olv["logging"] = (data[68] == 1)
-            olv["spycall"] = (data[64] == 1)
-            olv["call_interception"] = (data[65] == 1)
-            olv["sms"] = (data[66] == 1)
-            olv["addressbook"] = (data[67] == 1)
-            olv["tracking"] = (data[69] == 1)
-            olv["phonelogs"] = (data[70] == 1)
+            olv = {
+                "data": data,
+                "logging": data[68] == 1,
+                "spycall": data[64] == 1,
+                "call_interception": data[65] == 1,
+                "sms": data[66] == 1,
+                "addressbook": data[67] == 1,
+                "tracking": data[69] == 1,
+                "phonelogs": data[70] == 1,
+            }
+
             cfg[name] = olv
         else:
             cfg[name] = data
@@ -821,10 +824,7 @@ class M(object):
 
     def read(self, a0, a1= None):
         r = None
-        if a1 is None:
-            r = self.b.read(a0)
-        else:
-            r = self.read_at(a0,a1)
+        r = self.b.read(a0) if a1 is None else self.read_at(a0,a1)
         return r
 
     def read_at(self, off, n):

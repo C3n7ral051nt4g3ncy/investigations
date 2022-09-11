@@ -20,8 +20,7 @@ def extract_obfuscated_strings(method):
             continue
         if statement.expression.member == 'add' and statement.expression.qualifier == 'list':
             for child in statement.expression.arguments[0].initializer.children:
-                for literal in child:
-                    acc.append(int(literal.value))
+                acc.extend(int(literal.value) for literal in child)
         obfuscated_strings.append(acc)
 
     return obfuscated_strings
@@ -38,13 +37,15 @@ def parse_source_code(source_dir, method_name='OOOoOoiIoIIiO0o01I1I00'):
                 for type in tree.types:
                     if not type.methods:
                         continue
-                    for method in type.methods:
-                        if method_name in method.name:
-                            # print(f'{tree.package.name}.{type.name}.{method.name}')
-                            data.append({
-                                'class_name': f'{tree.package.name}.{type.name}',
-                                'strings': extract_obfuscated_strings(method)
-                            })
+                    data.extend(
+                        {
+                            'class_name': f'{tree.package.name}.{type.name}',
+                            'strings': extract_obfuscated_strings(method),
+                        }
+                        for method in type.methods
+                        if method_name in method.name
+                    )
+
             except Exception as e:
                 print(java_file)
                 print(e)

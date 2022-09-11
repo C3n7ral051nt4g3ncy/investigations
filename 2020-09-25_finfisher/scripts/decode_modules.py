@@ -19,7 +19,7 @@ def unpack(data, s=0):
     Decode the binary with aplib
     """
     cin = ctypes.c_buffer(data)
-    cout = ctypes.c_buffer(s if s else len(data) * 20)
+    cout = ctypes.c_buffer(s or len(data) * 20)
     aplib_path = os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
             "_aplib.so")
@@ -44,13 +44,13 @@ if __name__ == "__main__":
         IV = b'\xd9!V\xee\xbe\x0c\xf9\x18*\xfaR;%&\xb7\x08'
 
     if hmd5 == hashlib.md5(data).digest():
-        print('[+] DATA HASH match {}'.format(binascii.hexlify(hmd5)))
+        print(f'[+] DATA HASH match {binascii.hexlify(hmd5)}')
 
     key = b'YO\xf4\xa6\xd6\x1d\xd7!\xdc\x01A\xbfg\x83"m'
     xdata = AES.new(key,mode=AES.MODE_CBC,IV=bytes(IV)).decrypt(data)
     size = struct.unpack('I',xdata[:4])[0]
     print('[+] Unpacked size: {:x}'.format(size))
     depack = unpack(xdata[4:], size)
-    with open(args.MODULE + '.unpacked.bin','wb') as f:
+    with open(f'{args.MODULE}.unpacked.bin', 'wb') as f:
         f.write(depack)
-    print('[*] saved to {}.unpacked.bin'.format(sys.argv[1]))
+    print(f'[*] saved to {sys.argv[1]}.unpacked.bin')

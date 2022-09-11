@@ -50,11 +50,7 @@ class JsonEncoder(json.JSONEncoder):
 
 
 def search_config(data):
-    r = re.search(b"ihihik.{2}ikihik", data)
-    if r:
-        return r.span()[0]
-    else:
-        return None
+    return r.span()[0] if (r := re.search(b"ihihik.{2}ikihik", data)) else None
 
 
 def decode_config(data):
@@ -81,7 +77,7 @@ def decode_config(data):
                 except UnicodeDecodeError:
                     config[CONFIG_STRUCT[dec[0]]] = v
         else:
-            print("Unknown config command {}".format(dec[0]))
+            print(f"Unknown config command {dec[0]}")
         # Add size +
         i += dec[2] + 6
     return config
@@ -110,6 +106,6 @@ if __name__ == '__main__':
     else:
         for d in config:
             if isinstance(config[d], bytearray):
-                print("{} : {}".format(d, config[d].hex()))
+                print(f"{d} : {config[d].hex()}")
             else:
-                print("{} : {}".format(d, config[d]))
+                print(f"{d} : {config[d]}")

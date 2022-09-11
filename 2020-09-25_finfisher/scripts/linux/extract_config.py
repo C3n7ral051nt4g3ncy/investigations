@@ -27,12 +27,10 @@ if __name__ == "__main__":
     if not os.path.isdir('extracted'):
         os.mkdir('extracted')
 
-    i = 1
-    for cfg in regex_cfg.finditer(data):
+    for i, cfg in enumerate(regex_cfg.finditer(data), start=1):
         pos = cfg.span()[0]
         # Decrypt the first 4 bytes to get the length
         length = struct.unpack('I', bytearray([data[pos]^0xaa, data[pos+1]^0x5a, data[pos+2]^0xa5, data[pos+3]^0xaa]))[0]
         with open('extracted/{0:02d}.dat'.format(i), 'wb+') as f:
             f.write(data[pos:pos+length])
         print("Configuration file extracted {0:02d}.dat ({} bytes)".format(i, length))
-        i += 1
